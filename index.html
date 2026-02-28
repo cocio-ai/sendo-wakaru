@@ -2,141 +2,182 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鮮度簡単わかる君 Ver.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>鮮度簡単わかる君</title>
 <style>
+  :root {
+    --primary-color: #007AFF;
+    --bg-color: #F2F2F7;
+    --card-bg: #FFFFFF;
+    --text-main: #1C1C1E;
+    --text-sub: #8E8E93;
+    --safe-color: #34C759;
+    --warning-color: #FF9500;
+    --danger-color: #FF3B30;
+  }
+
   body {
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
     margin: 0;
-    padding: 20px;
-    color: #333;
+    padding: 16px;
+    color: var(--text-main);
   }
   
-  .container {
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin: auto;
-  }
-  
-  h1 {
-    font-size: 24px;
-    margin-bottom: 25px;
+  .app-header {
     text-align: center;
-    color: #2c3e50;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: 24px;
+    padding-top: 10px;
   }
   
-  h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
-    color: #555;
-    margin-top: 20px;
+  .app-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  /* カードレイアウト */
+  .card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
   
   .input-group {
+    margin-bottom: 20px;
+  }
+  .input-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .label-area {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-sub);
+  }
+
+  .today-btn {
+    background-color: rgba(0, 122, 255, 0.1);
+    color: var(--primary-color);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
   }
 
   input[type="date"] {
-    font-size: 18px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    appearance: none;
+    -webkit-appearance: none;
     width: 100%;
-    box-sizing: border-box; /* 枠線を含めたサイズ計算 */
+    height: 50px;
+    font-size: 18px;
+    font-family: inherit;
+    padding: 0 16px;
+    background-color: #F9F9F9;
+    border: 1px solid #E5E5EA;
+    border-radius: 12px;
+    box-sizing: border-box;
+    color: var(--text-main);
+    outline: none;
   }
 
-  /* 今日の日付を入れるボタン */
-  .today-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    cursor: pointer;
-    margin-left: 10px;
-    vertical-align: middle;
+  input[type="date"]:focus {
+    border-color: var(--primary-color);
+    background-color: #FFF;
   }
-  
-  .result-box {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+
+  /* 結果表示エリア */
+  .result-card {
     text-align: center;
+    transition: background-color 0.3s ease;
   }
 
   .remaining-label {
     font-size: 14px;
-    color: #777;
+    font-weight: 600;
+    color: inherit;
+    opacity: 0.8;
   }
 
   .remaining-days {
-    font-size: 42px;
-    font-weight: bold;
-    color: #333;
-    margin: 10px 0;
+    font-size: 56px;
+    font-weight: 800;
+    margin: 5px 0;
+    line-height: 1.1;
   }
   
   .removal-date {
-    font-size: 18px;
-    color: #555;
-    font-weight: bold;
-  }
-  
-  /* 注意喚起のアニメーション */
-  .warning {
-    color: #e74c3c; /* 赤色 */
-    animation: pulse 1.5s infinite;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
   }
 
-  .safe {
-    color: #27ae60; /* 緑色 */
+  /* ステータスカラー */
+  .status-neutral {
+    background-color: var(--card-bg);
+    color: var(--text-main);
   }
-  
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+  .status-safe {
+    background-color: var(--safe-color);
+    color: white;
+  }
+  .status-warning {
+    background-color: var(--warning-color);
+    color: white;
+  }
+  .status-danger {
+    background-color: var(--danger-color);
+    color: white;
   }
 </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>鮮度簡単わかる君 <span style="font-size:12px; color:#888;">Ver.2</span></h1>
-    
+  <div class="app-header">
+    <h1 class="app-title">鮮度簡単わかる君</h1>
+  </div>
+  
+  <div class="card">
     <div class="input-group">
-      <h2>
-        ST表示日 (開始日)
-        <button type="button" class="today-btn" onclick="setToday()">今日にする</button>
-      </h2>
+      <div class="label-area">
+        <h2>ST表示日 (開始日)</h2>
+        <button type="button" class="today-btn" onclick="setToday()">今日</button>
+      </div>
       <input type="date" id="startDatePicker" onchange="calculate()">
     </div>
     
     <div class="input-group">
-      <h2>賞味期限</h2>
+      <div class="label-area">
+        <h2>賞味期限</h2>
+      </div>
       <input type="date" id="expirationDatePicker" onchange="calculate()">
-    </div>
-    
-    <div class="result-box">
-      <div class="remaining-label">販売可能日数</div>
-      <div class="remaining-days" id="remainingDays">---</div>
-      <div class="removal-date" id="removalDate">---</div>
     </div>
   </div>
   
+  <div class="card result-card status-neutral" id="resultCard">
+    <div class="remaining-label">残り販売日数</div>
+    <div class="remaining-days" id="remainingDays">-- <span style="font-size:24px;">日</span></div>
+    <div class="removal-date" id="removalDate">撤去予定日: --月--日</div>
+  </div>
+  
   <script>
-    // ページ読み込み時に初期設定
     window.onload = function() {
-        setToday(); // 開始日をデフォルトで「今日」にする
+        setToday();
     };
 
     function setToday() {
@@ -154,47 +195,47 @@
       
       const remainingDaysEl = document.getElementById("remainingDays");
       const removalDateEl = document.getElementById("removalDate");
+      const resultCard = document.getElementById("resultCard");
 
-      // 両方の日付が入力されていない場合は計算しない
+      // 未入力のリセット
       if (!startVal || !expireVal) {
-        remainingDaysEl.textContent = "---";
-        removalDateEl.textContent = "---";
-        remainingDaysEl.className = "remaining-days"; // クラスリセット
+        remainingDaysEl.innerHTML = '-- <span style="font-size:24px;">日</span>';
+        removalDateEl.textContent = "撤去予定日: --月--日";
+        resultCard.className = "card result-card status-neutral";
         return;
       }
 
-      // 日付オブジェクトの作成（時間を0:00:00に統一してズレを防ぐ）
       const startDate = new Date(startVal);
       startDate.setHours(0, 0, 0, 0);
 
       const expirationDate = new Date(expireVal);
       expirationDate.setHours(0, 0, 0, 0);
       
-      // 差分の計算 (ミリ秒 -> 日数)
       const diffTime = expirationDate - startDate;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      // 表示の更新
-      remainingDaysEl.textContent = diffDays + " 日";
-      
-      // 撤去日の表示ロジック
-      // 今回はシンプルに「賞味期限日」を撤去日として表示します
-      // ※もし「賞味期限の1日前」にするなら、expirationDateから1日引いてください
-      const options = { month: 'long', day: 'numeric', weekday: 'short' };
+      const options = { month: 'numeric', day: 'numeric', weekday: 'short' };
       const formattedRemovalDate = expirationDate.toLocaleDateString('ja-JP', options);
       
       removalDateEl.textContent = "撤去予定日: " + formattedRemovalDate;
 
-      // クラスのリセットと警告判定
-      remainingDaysEl.className = "remaining-days"; // リセット
+      // クラスのリセット
+      resultCard.className = "card result-card"; 
       
+      // 状況に応じたカラーリングとテキスト表示
       if (diffDays < 0) {
-        remainingDaysEl.textContent = "期限切れ (" + diffDays + "日)";
-        remainingDaysEl.classList.add("warning");
-      } else if (diffDays <= 7) {
-        remainingDaysEl.classList.add("warning");
+        remainingDaysEl.textContent = "期限切れ";
+        remainingDaysEl.style.fontSize = "42px"; // 文字が大きいので少し縮小
+        resultCard.classList.add("status-danger");
       } else {
-        remainingDaysEl.classList.add("safe");
+        remainingDaysEl.innerHTML = diffDays + ' <span style="font-size:24px;">日</span>';
+        remainingDaysEl.style.fontSize = "56px";
+        
+        if (diffDays <= 7) {
+          resultCard.classList.add("status-warning"); // 7日以下はオレンジ
+        } else {
+          resultCard.classList.add("status-safe");    // 8日以上はグリーン
+        }
       }
     }
   </script>
