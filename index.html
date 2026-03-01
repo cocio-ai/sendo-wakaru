@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>鮮度簡単わかる君</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F2F2F7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
   :root {
     --primary-color: #007AFF;
@@ -37,7 +42,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* カードレイアウト */
   .card {
     background-color: var(--card-bg);
     border-radius: 16px;
@@ -99,7 +103,6 @@
     background-color: #FFF;
   }
 
-  /* 結果表示エリア */
   .result-card {
     text-align: center;
     transition: background-color 0.3s ease;
@@ -127,7 +130,6 @@
     border-top: 1px dashed rgba(0,0,0,0.1);
   }
 
-  /* ステータスカラー */
   .status-neutral {
     background-color: var(--card-bg);
     color: var(--text-main);
@@ -197,7 +199,6 @@
       const removalDateEl = document.getElementById("removalDate");
       const resultCard = document.getElementById("resultCard");
 
-      // 未入力のリセット
       if (!startVal || !expireVal) {
         remainingDaysEl.innerHTML = '-- <span style="font-size:24px;">日</span>';
         removalDateEl.textContent = "撤去予定日: --月--日";
@@ -211,30 +212,36 @@
       const expirationDate = new Date(expireVal);
       expirationDate.setHours(0, 0, 0, 0);
       
+      // 1. 残り販売日数の計算
       const diffTime = expirationDate - startDate;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
+      // 2. 【修正】撤去予定日の計算（「本日」＋「残り販売日数」）
+      const todayForCalc = new Date(); // アプリを操作している「今日」を取得
+      todayForCalc.setHours(0, 0, 0, 0);
+      
+      const removalDate = new Date(todayForCalc);
+      removalDate.setDate(todayForCalc.getDate() + diffDays);
+      
       const options = { month: 'numeric', day: 'numeric', weekday: 'short' };
-      const formattedRemovalDate = expirationDate.toLocaleDateString('ja-JP', options);
+      const formattedRemovalDate = removalDate.toLocaleDateString('ja-JP', options);
       
       removalDateEl.textContent = "撤去予定日: " + formattedRemovalDate;
 
-      // クラスのリセット
       resultCard.className = "card result-card"; 
       
-      // 状況に応じたカラーリングとテキスト表示
       if (diffDays < 0) {
         remainingDaysEl.textContent = "期限切れ";
-        remainingDaysEl.style.fontSize = "42px"; // 文字が大きいので少し縮小
+        remainingDaysEl.style.fontSize = "42px";
         resultCard.classList.add("status-danger");
       } else {
         remainingDaysEl.innerHTML = diffDays + ' <span style="font-size:24px;">日</span>';
         remainingDaysEl.style.fontSize = "56px";
         
         if (diffDays <= 7) {
-          resultCard.classList.add("status-warning"); // 7日以下はオレンジ
+          resultCard.classList.add("status-warning");
         } else {
-          resultCard.classList.add("status-safe");    // 8日以上はグリーン
+          resultCard.classList.add("status-safe");
         }
       }
     }
